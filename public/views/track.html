@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+<div id="map" style="width:100%;height:500px"></div>
+
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key= AIzaSyBq0wo_EuFzObK9UOBEo873iL_5qwTAiJQ"></script>
+<!--
+To use this code on your website, get a free API key from Google.
+Read more at: https://www.w3schools.com/graphics/google_maps_basic.asp
+-->
+
+<script>
+    
+$(document).ready(function(){
+    var socket = io();
+    var cid = getParams('cid');
+    
+    socket.emit('addcid', {cid: cid});
+    socket.on('getTripLatLng', function (data) {
+        console.log(data);
+        changePosition(data);
+    });
+    myMap();
+});
+    var marker;
+function myMap() {
+  var myCenter = new google.maps.LatLng(51.508742,-0.120850);
+  var mapCanvas = document.getElementById("map");
+  var mapOptions = {center: myCenter, zoom: 5};
+  var map = new google.maps.Map(mapCanvas, mapOptions);
+  marker = new google.maps.Marker({position:myCenter});
+  marker.setMap(map);
+}
+function getParams(name)
+{
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regexS = "[\\?&]" + name + "=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(window.location.href);
+    if (results == null)
+        return "";
+    else
+        return results[1];
+}
+function changePosition(data) {
+    
+    var latlng = new google.maps.LatLng(data.lat, data.lng);
+    marker.setPosition(latlng);
+}
+
+</script>
+
+</body>
+</html>
